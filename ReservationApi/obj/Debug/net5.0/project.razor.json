@@ -15601,6 +15601,17 @@
     "CSharpLanguageVersion": 900
   },
   "RootNamespace": "ReservationApi",
-  "Documents": [],
+  "Documents": [
+    {
+      "FilePath": "/Users/thaithuytien/Saxion/AAD/Backend/backend-prototype1-.net/ReservationApi/Views/Home/Index.cshtml",
+      "TargetPath": "Views\\Home\\Index.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Users/thaithuytien/Saxion/AAD/Backend/backend-prototype1-.net/ReservationApi/Views/Home/Secret.cshtml",
+      "TargetPath": "Views\\Home\\Secret.cshtml",
+      "FileKind": "mvc"
+    }
+  ],
   "SerializationFormat": "0.2"
 }
