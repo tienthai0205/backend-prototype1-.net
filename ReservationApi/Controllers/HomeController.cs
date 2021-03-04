@@ -20,35 +20,34 @@ namespace ReservationApi.Controllers
         {
             return View();
         }
-
         public IActionResult Authenticate()
         {
-            var claims = new[]
-            {
+
+            var claims = new[]{
                 new Claim(JwtRegisteredClaimNames.Sub, "some_id"),
                 new Claim("granny", "cookie")
             };
             var secretBytes = Encoding.UTF8.GetBytes(Constants.Secret);
             var key = new SymmetricSecurityKey(secretBytes);
-
-            var algorithm = SecurityAlgorithms.HmacSha256;
-            var signingCredentials = new SigningCredentials(key, algorithm);
+            var algo = SecurityAlgorithms.HmacSha256;
+            var signingCredentials = new SigningCredentials(key: key, algorithm: algo);
 
             var token = new JwtSecurityToken(
-                Constants.Issuer,
-                Constants.Audiance,
-                claims,
+                issuer: Constants.Issuer, 
+                audience: Constants.Audiance,
+                claims: claims,
                 notBefore: DateTime.Now,
                 expires: DateTime.Now.AddHours(1),
-                signingCredentials
+                signingCredentials: signingCredentials
             );
 
             var tokenJson = new JwtSecurityTokenHandler().WriteToken(token);
-            
-            return Ok(new { accessToken = tokenJson });
+
+            return Ok(new { access_token = tokenJson});
         }
 
-        public IActionResult Decode(string part){
+        public IActionResult Decode(string part)
+        {
             var bytes = Convert.FromBase64String(part);
             return Ok(Encoding.UTF8.GetString(bytes));
         }
