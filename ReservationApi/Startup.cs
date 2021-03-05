@@ -1,11 +1,13 @@
 using System.Text;
-
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using ReservationApi.Models;
 
 namespace ReservationApi
@@ -17,31 +19,34 @@ namespace ReservationApi
             services.AddDbContext<UserContext>(opts => 
                 opts.UseInMemoryDatabase("UserList")
             );
+            services.AddAuthentication("OAuth")
+                .AddJwtBearer("OAuth", config =>
+                {
+                    config.SaveToken = true;
+                    var secretBytes = Encoding.UTF8.GetBytes(Constants.Secret);
+                    var key = new SymmetricSecurityKey(secretBytes);
 
-            // AddIdentity registers the services
-            services.AddIdentity<IdentityUser, IdentityRole>(config =>
-            {
-                config.Password.RequiredLength = 4;
-                config.Password.RequireDigit = false;
-                config.Password.RequireNonAlphanumeric = false;
-                config.Password.RequireUppercase = false;
-            })
-                .AddEntityFrameworkStores<UserContext>()
-                .AddDefaultTokenProviders();
+                    config.Events = new JwtBearerEvents()
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            if (context.Request.Query.ContainsKey("access_token"))
+                            {
+                                context.Token = context.Request.Query["access_token"];
+                            }
 
-            services.ConfigureApplicationCookie(config =>
-            {
-                config.Cookie.Name = "IdentityServer.Cookie";
-                config.LoginPath = "/Auth/Login";
-                config.LogoutPath = "/Auth/Logout";
-            });
+                            return Task.CompletedTask;
+                        }
+                    };
 
-            // services.AddIdentityServer()
-            //     .AddAspNetIdentity<IdentityUser>()
-            //     .AddInMemoryApiResources(Configuration)
-            //     .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
-            //     .AddInMemoryClients(Configuration.GetClients())
-            //     .AddDeveloperSigningCredential();
+                    config.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidIssuer = Constants.Issuer,
+                        ValidAudience = Constants.Audiance,
+                        IssuerSigningKey = key,
+                    };
+                });
+
 
             services.AddControllers();
         }
