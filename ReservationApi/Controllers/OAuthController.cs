@@ -48,7 +48,7 @@ namespace ReservationApi.Controllers
             // some mechanism for validating the code
 
             var claims = new[]
-          {
+            {
                 new Claim(JwtRegisteredClaimNames.Sub, "some_id"),
                 new Claim("granny", "cookie")
             };

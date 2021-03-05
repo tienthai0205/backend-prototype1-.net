@@ -420,3 +420,4 @@
 /Users/thaithuytien/Saxion/AAD/Backend/backend-prototype1-.net/ReservationApi/bin/Debug/net5.0/Microsoft.AspNetCore.Mvc.Razor.Extensions.dll
 /Users/thaithuytien/Saxion/AAD/Backend/backend-prototype1-.net/ReservationApi/bin/Debug/net5.0/Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation.dll
 /Users/thaithuytien/Saxion/AAD/Backend/backend-prototype1-.net/ReservationApi/bin/Debug/net5.0/Microsoft.Extensions.DependencyModel.dll
+/Users/thaithuytien/Saxion/AAD/Backend/backend-prototype1-.net/ReservationApi/bin/Debug/net5.0/BCrypt.Net-Next.dll
