@@ -13,6 +13,7 @@ namespace ReservationApi.Models
             // LoadDefaultUsers();
         }
         public DbSet<User> Users { get; set; }
+        public DbSet<Room> Rooms { get; set; }
 
         // private void LoadDefaultUsers()
         // {

@@ -19,17 +19,15 @@ namespace ReservationApi.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly ILogger<UsersController> _logger;
         private readonly UserContext _context;
 
-        public UsersController(ILogger<UsersController> logger, UserContext context)
+        public UsersController(UserContext context)
         {
-            _logger = logger;
             _context = context;
         }
         // GET api/users
         [HttpGet]
-        public async Task<ActionResult<List<User>>> GetUsers()
+        public ActionResult<List<User>> GetUsers()
         {
             List<User> users = _context.Users.ToList();
             return Ok(users);
@@ -150,6 +148,5 @@ namespace ReservationApi.Controllers
             }
             return true;
         }
-
     }
 }
