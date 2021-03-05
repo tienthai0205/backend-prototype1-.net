@@ -66,7 +66,7 @@ namespace ReservationApi.Controllers
 
             if (!verified)
             {
-
+                return BadRequest(new { error = "Username or password incorrect" });
             }
             var claims = new[]
             {
