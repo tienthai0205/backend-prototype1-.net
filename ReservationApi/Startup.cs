@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,7 +18,7 @@ namespace ReservationApi
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<UserContext>(opts => 
+            services.AddDbContext<UserContext>(opts =>
                 opts.UseInMemoryDatabase("UserList")
             );
             services.AddAuthentication("OAuth")
@@ -47,7 +49,7 @@ namespace ReservationApi
                     };
                 });
 
-
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); 
             services.AddControllers();
         }
 

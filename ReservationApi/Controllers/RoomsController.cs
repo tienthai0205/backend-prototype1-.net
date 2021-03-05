@@ -22,6 +22,7 @@ namespace ReservationApi.Controllers
         }
 
         // GET: api/Rooms
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
         {
@@ -73,7 +74,7 @@ namespace ReservationApi.Controllers
 
             return NoContent();
         }
-        
+
         private bool RoomExists(int id)
         {
             return _context.Rooms.Any(e => e.Id == id);
