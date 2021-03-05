@@ -1,50 +1,51 @@
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using ReservationApi.Models;
 
 namespace ReservationApi
 {
     public class Startup
     {
-
         public void ConfigureServices(IServiceCollection services)
         {
-            // services.AddDbContext<UserContext>( opt => opt.UseInMemoryDatabase("Users"));
-            services.AddAuthentication("OAuth")
-                    .AddJwtBearer("OAuth", config =>
-                    {
-                        var secretBytes = Encoding.UTF8.GetBytes(Constants.Secret);
-                        var key = new SymmetricSecurityKey(secretBytes);
+            services.AddDbContext<UserContext>(opts => 
+                opts.UseInMemoryDatabase("UserList")
+            );
 
-                        // config.Events = new JwtBearerEvents()
-                        // {
-                        //     OnMessageReceived = context => {
-                        //         if(context.Request.Query.ContainsKey("access_token"))
-                        //         {
-                        //             context.Token = context.Request.Query["access_token"];
-                        //         }
-                        //         return Task.CompletedTask;
-                        //     }
-                        // };
-                        config.TokenValidationParameters = new TokenValidationParameters()
-                        {
-                            IssuerSigningKey = key,
-                            ValidIssuer = Constants.Issuer,
-                            ValidAudience = Constants.Audiance 
-                        };
-                    });
+            // AddIdentity registers the services
+            services.AddIdentity<IdentityUser, IdentityRole>(config =>
+            {
+                config.Password.RequiredLength = 4;
+                config.Password.RequireDigit = false;
+                config.Password.RequireNonAlphanumeric = false;
+                config.Password.RequireUppercase = false;
+            })
+                .AddEntityFrameworkStores<UserContext>()
+                .AddDefaultTokenProviders();
 
-            services.AddControllersWithViews();
+            services.ConfigureApplicationCookie(config =>
+            {
+                config.Cookie.Name = "IdentityServer.Cookie";
+                config.LoginPath = "/Auth/Login";
+                config.LogoutPath = "/Auth/Logout";
+            });
+
+            // services.AddIdentityServer()
+            //     .AddAspNetIdentity<IdentityUser>()
+            //     .AddInMemoryApiResources(Configuration)
+            //     .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
+            //     .AddInMemoryClients(Configuration.GetClients())
+            //     .AddDeveloperSigningCredential();
+
+            services.AddControllers();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -60,7 +61,7 @@ namespace ReservationApi
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
             });
         }
     }
