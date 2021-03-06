@@ -34,10 +34,18 @@ namespace ReservationApi.Controllers
         [HttpPost]
         public async Task<ActionResult> PostReservation([FromBody]Reservation reservation)
         {
+            if(CurrentUserId() != reservation.UserId){
+                return Unauthorized(new {error = "You are not allowed to create other people reservation"});
+            }
+
             Room room = _context.Rooms.Find(reservation.RoomId);
             User user = _context.Users.Find(reservation.UserId);
             reservation.Room = room;
             reservation.User = user;
+            var existingReservation = _context.Reservations.Where(re => re.RoomId == room.Id && re.Date == reservation.Date).ToList();
+            if (existingReservation.Count > 0){
+                return BadRequest(new {error = "The room is not available for reservation!"});
+            }
             await _context.Reservations.AddAsync(reservation);
             AddReservationToRoom(room.Id, reservation);
             await _context.SaveChangesAsync();
