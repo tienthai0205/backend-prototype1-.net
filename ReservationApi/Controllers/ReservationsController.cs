@@ -53,6 +53,9 @@ namespace ReservationApi.Controllers
             {
                 return BadRequest();
             }
+            if (!IsAuthorized(id)){
+                return Unauthorized(new {error = "You are not allowed to update other people reservation"});
+            }
 
             _context.Entry(reservation).State = EntityState.Modified;
 
@@ -80,6 +83,9 @@ namespace ReservationApi.Controllers
         public async Task<IActionResult> DeleteReservation(int id)
         {
             var reservation = await _context.Reservations.FindAsync(id);
+            if (!IsAuthorized(id)){
+                return Unauthorized(new {error = "You are not allowed to remove other people reservation"});
+            }
             if (reservation == null)
             {
                 return NotFound(new { error = "Reservation does not exist!"});
@@ -107,6 +113,17 @@ namespace ReservationApi.Controllers
         private void AddReservationToRoom(int roomId, Reservation reservation){
             _context.Rooms.Find(roomId).Reservations.Add(reservation);
             _context.SaveChangesAsync();
+        }
+        public bool IsAuthorized(int id)
+        {
+            Reservation re = _context.Reservations.Find(id);
+            int userId = re.UserId;
+            
+            if (CurrentUserId() != userId)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

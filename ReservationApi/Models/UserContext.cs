@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
 namespace ReservationApi.Models
@@ -14,5 +11,11 @@ namespace ReservationApi.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Reservation>()
+                .HasIndex(re => re.Date)
+                .IsUnique();
+        }
     }
 }
