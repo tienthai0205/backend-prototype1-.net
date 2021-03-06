@@ -25,19 +25,22 @@ namespace ReservationApi.Controllers
         {
             _context = context;
         }
-
+        // GET api/users/seed
         [Route("seed")]
         [HttpGet]
         public async Task<RedirectToActionResult> Seed()
         {
             _context.Users.Add(new User {Id = 1, Email = "tien@saxion.nl", Password = BCrypt.Net.BCrypt.HashPassword("Tien12345") });
             _context.Users.Add(new User { Id= 2, Email = "max@saxion.nl", Password = BCrypt.Net.BCrypt.HashPassword("Max12345") });
+
             _context.Rooms.Add(new Room { Id = 1, Number = "1A", Floor = "1st" });
             _context.Rooms.Add(new Room { Id = 2, Number = "2A", Floor = "1st" });
             _context.Rooms.Add(new Room { Id = 3, Number = "3A", Floor = "1st" });
             _context.Rooms.Add(new Room { Id = 4, Number = "1B", Floor = "2nd" });
             _context.Rooms.Add(new Room { Id = 5, Number = "2B", Floor = "2nd" });
             _context.Rooms.Add(new Room { Id = 6, Number = "3A", Floor = "2nd" });
+
+            _context.Reservations.Add(new Reservation{ Id = 1, RoomId = 1, UserId = 1, Date = "01/02/2021"});
 
             await _context.SaveChangesAsync();
             return RedirectToAction(actionName: "GetUsers", controllerName:"Users");

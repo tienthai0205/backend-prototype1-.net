@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReservationApi.Models;
@@ -22,11 +21,27 @@ namespace ReservationApi.Controllers
         }
 
         // GET: api/Rooms
-        [Authorize]
+        // [Authorize]
+        // [HttpGet]
+        // public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
+        // {
+        //     return await _context.Rooms.ToListAsync();
+        // }
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
+        public async Task<ActionResult<List<Room>>> GetRoomsByDate([FromQuery(Name = "date")] string date)
         {
-            return await _context.Rooms.ToListAsync();
+            List<Reservation> reservations = _context.Reservations.Where(re => re.Date == date).ToList();
+            if (reservations.Count == 0){
+                return await _context.Rooms.ToListAsync();
+            }
+            List<int> bookedRooms = new List<int>();
+            foreach( Reservation re in reservations){
+                bookedRooms.Add(re.RoomId);
+            }
+            List<Room> allRooms = await _context.Rooms.ToListAsync();
+            List<Room> availableRooms = allRooms.Where(x => !bookedRooms.Any(y => x.Id == y)).ToList();
+            return Ok(availableRooms);
         }
 
         [Authorize]

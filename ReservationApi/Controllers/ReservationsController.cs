@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReservationApi.Models;
@@ -24,27 +25,13 @@ namespace ReservationApi.Controllers
 
         // GET: api/Reservations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations()
+        public ActionResult<IEnumerable<Reservation>> GetReservations()
         {
-            return await _context.Reservations.ToListAsync();
-        }
-
-        // GET: api/Reservations/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Reservation>> GetReservation(int id)
-        {
-            var reservation = await _context.Reservations.FindAsync(id);
-
-            if (reservation == null)
-            {
-                return NotFound();
-            }
-
-            return reservation;
+            List<Reservation> myReservations = _context.Reservations.Where(re => re.UserId == CurrentUserId()).ToList();
+            return myReservations;
         }
 
         // PUT: api/Reservations/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutReservation(int id, Reservation reservation)
         {
@@ -79,6 +66,10 @@ namespace ReservationApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
         {
+            Room room = _context.Rooms.Find(reservation.RoomId);
+            User user = _context.Users.Find(reservation.UserId);
+            reservation.Room = room;
+            reservation.User = user;
             _context.Reservations.Add(reservation);
             await _context.SaveChangesAsync();
 
@@ -104,6 +95,14 @@ namespace ReservationApi.Controllers
         private bool ReservationExists(int id)
         {
             return _context.Reservations.Any(e => e.Id == id);
+        }
+
+        private int CurrentUserId(){
+            var accessToken = HttpContext.GetTokenAsync("access_token");
+            var jwt = accessToken.Result;
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(jwt);
+            return Int32.Parse(token.Subject);
         }
     }
 }
