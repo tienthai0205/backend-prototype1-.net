@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "ArxPKUVSj+UVcE/oTJuQufTFyJAVfClHTCsJj1UhCVXLx/WEfjNa+IlzgMpjLgH1hCqZmQ32OqqcQD/qod57ig==",
+  "dgSpecHash": "gBuoJPBZwBJCHjCFzvh9wHkHXSxM2FIlCbUKrsiMtbN3wHgkRuOG7jRKDINUvZ29cv+ZrJjaMwOPEvsQK82iuQ==",
   "success": true,
   "projectFilePath": "/Users/thaithuytien/Saxion/AAD/Backend/backend-prototype1-.net/ReservationApi/ReservationApi.csproj",
   "expectedPackageFiles": [
@@ -11,6 +11,8 @@
     "/Users/thaithuytien/.nuget/packages/microsoft.aspnetcore.cryptography.keyderivation/5.0.3/microsoft.aspnetcore.cryptography.keyderivation.5.0.3.nupkg.sha512",
     "/Users/thaithuytien/.nuget/packages/microsoft.aspnetcore.html.abstractions/2.2.0/microsoft.aspnetcore.html.abstractions.2.2.0.nupkg.sha512",
     "/Users/thaithuytien/.nuget/packages/microsoft.aspnetcore.identity.entityframeworkcore/5.0.3/microsoft.aspnetcore.identity.entityframeworkcore.5.0.3.nupkg.sha512",
+    "/Users/thaithuytien/.nuget/packages/microsoft.aspnetcore.jsonpatch/5.0.3/microsoft.aspnetcore.jsonpatch.5.0.3.nupkg.sha512",
+    "/Users/thaithuytien/.nuget/packages/microsoft.aspnetcore.mvc.newtonsoftjson/5.0.3/microsoft.aspnetcore.mvc.newtonsoftjson.5.0.3.nupkg.sha512",
     "/Users/thaithuytien/.nuget/packages/microsoft.aspnetcore.mvc.razor.extensions/5.0.3/microsoft.aspnetcore.mvc.razor.extensions.5.0.3.nupkg.sha512",
     "/Users/thaithuytien/.nuget/packages/microsoft.aspnetcore.mvc.razor.runtimecompilation/5.0.3/microsoft.aspnetcore.mvc.razor.runtimecompilation.5.0.3.nupkg.sha512",
     "/Users/thaithuytien/.nuget/packages/microsoft.aspnetcore.razor/2.2.0/microsoft.aspnetcore.razor.2.2.0.nupkg.sha512",
@@ -65,7 +67,8 @@
     "/Users/thaithuytien/.nuget/packages/microsoft.visualstudio.web.codegenerators.mvc/5.0.2/microsoft.visualstudio.web.codegenerators.mvc.5.0.2.nupkg.sha512",
     "/Users/thaithuytien/.nuget/packages/microsoft.win32.registry/4.7.0/microsoft.win32.registry.4.7.0.nupkg.sha512",
     "/Users/thaithuytien/.nuget/packages/microsoft.win32.systemevents/4.7.0/microsoft.win32.systemevents.4.7.0.nupkg.sha512",
-    "/Users/thaithuytien/.nuget/packages/newtonsoft.json/11.0.2/newtonsoft.json.11.0.2.nupkg.sha512",
+    "/Users/thaithuytien/.nuget/packages/newtonsoft.json/12.0.2/newtonsoft.json.12.0.2.nupkg.sha512",
+    "/Users/thaithuytien/.nuget/packages/newtonsoft.json.bson/1.0.2/newtonsoft.json.bson.1.0.2.nupkg.sha512",
     "/Users/thaithuytien/.nuget/packages/runtime.native.system/4.3.0/runtime.native.system.4.3.0.nupkg.sha512",
     "/Users/thaithuytien/.nuget/packages/swashbuckle.aspnetcore/5.6.3/swashbuckle.aspnetcore.5.6.3.nupkg.sha512",
     "/Users/thaithuytien/.nuget/packages/swashbuckle.aspnetcore.swagger/5.6.3/swashbuckle.aspnetcore.swagger.5.6.3.nupkg.sha512",

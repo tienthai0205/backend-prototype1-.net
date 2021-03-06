@@ -11,8 +11,8 @@ using ReservationApi.Models;
 
 namespace ReservationApi.Controllers
 {
-    [Route("api/[controller]")]
     [Authorize]
+    [Route("api/[controller]")]
     [ApiController]
     public class ReservationsController : ControllerBase
     {
@@ -23,15 +23,29 @@ namespace ReservationApi.Controllers
             _context = context;
         }
 
-        // GET: api/Reservations
+        // GET: api/reservations
         [HttpGet]
         public ActionResult<IEnumerable<Reservation>> GetReservations()
         {
             List<Reservation> myReservations = _context.Reservations.Where(re => re.UserId == CurrentUserId()).ToList();
             return myReservations;
         }
+        // POST: api/reservations
+        [HttpPost]
+        public async Task<ActionResult> PostReservation([FromBody]Reservation reservation)
+        {
+            Room room = _context.Rooms.Find(reservation.RoomId);
+            User user = _context.Users.Find(reservation.UserId);
+            reservation.Room = room;
+            reservation.User = user;
+            _context.Reservations.Add(reservation);
+            AddReservationToRoom(room.Id, reservation);
+            await _context.SaveChangesAsync();
 
-        // PUT: api/Reservations/5
+            return Ok(reservation);
+        }
+
+        // PUT: api/reservations/1
         [HttpPut("{id}")]
         public async Task<IActionResult> PutReservation(int id, Reservation reservation)
         {
@@ -50,7 +64,7 @@ namespace ReservationApi.Controllers
             {
                 if (!ReservationExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new {error = "Reservation does not exist!"});
                 }
                 else
                 {
@@ -58,22 +72,7 @@ namespace ReservationApi.Controllers
                 }
             }
 
-            return NoContent();
-        }
-
-        // POST: api/Reservations
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
-        {
-            Room room = _context.Rooms.Find(reservation.RoomId);
-            User user = _context.Users.Find(reservation.UserId);
-            reservation.Room = room;
-            reservation.User = user;
-            _context.Reservations.Add(reservation);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetReservation", new { id = reservation.Id }, reservation);
+            return Ok(new {message = "Your reservation has been updated!"});
         }
 
         // DELETE: api/Reservations/5
@@ -83,13 +82,13 @@ namespace ReservationApi.Controllers
             var reservation = await _context.Reservations.FindAsync(id);
             if (reservation == null)
             {
-                return NotFound();
+                return NotFound(new { error = "Reservation does not exist!"});
             }
 
             _context.Reservations.Remove(reservation);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok( new {message = "Your reservation has been removed!"});
         }
 
         private bool ReservationExists(int id)
@@ -103,6 +102,11 @@ namespace ReservationApi.Controllers
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(jwt);
             return Int32.Parse(token.Subject);
+        }
+
+        private void AddReservationToRoom(int roomId, Reservation reservation){
+            _context.Rooms.Find(roomId).Reservations.Add(reservation);
+            _context.SaveChangesAsync();
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ReservationApi.Models;
-using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using System;
@@ -11,7 +10,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.EntityFrameworkCore;
 
 namespace ReservationApi.Controllers
 
@@ -40,12 +38,13 @@ namespace ReservationApi.Controllers
             _context.Rooms.Add(new Room { Id = 5, Number = "2B", Floor = "2nd" });
             _context.Rooms.Add(new Room { Id = 6, Number = "3A", Floor = "2nd" });
 
-            _context.Reservations.Add(new Reservation{ Id = 1, RoomId = 1, UserId = 1, Date = "01/02/2021"});
+            // _context.Reservations.Add(new Reservation{ Id = 1, RoomId = 1, UserId = 1, Date = "01/02/2021"});
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(actionName: "GetUsers", controllerName:"Users");
+            return RedirectToAction(actionName: "GetUsers", controllerName:"users");
         }
         // GET api/users
+        [Authorize]
         [HttpGet]
         public ActionResult<List<User>> GetUsers()
         {

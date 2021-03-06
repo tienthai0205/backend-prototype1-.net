@@ -20,14 +20,8 @@ namespace ReservationApi.Controllers
             _context = context;
         }
 
-        // GET: api/Rooms
-        // [Authorize]
-        // [HttpGet]
-        // public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
-        // {
-        //     return await _context.Rooms.ToListAsync();
-        // }
-
+        // GET: api/rooms/filter?date=01/02/2021
+        [Route("filter")]
         [HttpGet]
         public async Task<ActionResult<List<Room>>> GetRoomsByDate([FromQuery(Name = "date")] string date)
         {
@@ -44,8 +38,16 @@ namespace ReservationApi.Controllers
             return Ok(availableRooms);
         }
 
+        // GET: api/rooms
         [Authorize]
-        // GET: api/Rooms/5
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Room>>> GetAllRooms()
+        {
+            return await _context.Rooms.ToListAsync();
+        }
+
+        [Authorize]
+        // GET: api/rooms/1
         [HttpGet("{id}")]
         public async Task<ActionResult<Room>> GetRoom(int id)
         {
@@ -59,40 +61,10 @@ namespace ReservationApi.Controllers
             return room;
         }
 
-        // PUT: api/Rooms/5
-        [Authorize]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutRoom(int id, Room room)
-        {
-            if (id != room.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(room).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RoomExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         private bool RoomExists(int id)
         {
             return _context.Rooms.Any(e => e.Id == id);
         }
+
     }
 }
