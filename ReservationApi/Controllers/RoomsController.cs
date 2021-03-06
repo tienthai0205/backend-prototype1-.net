@@ -43,7 +43,14 @@ namespace ReservationApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Room>>> GetAllRooms()
         {
-            return await _context.Rooms.ToListAsync();
+            List<Room> rooms = await _context.Rooms.ToListAsync();
+            foreach (Room room in rooms){
+                var reservations = _context.Reservations.Where(re => re.RoomId == room.Id).ToList();
+                if(reservations.Any()){
+                    room.Reservations = reservations;
+                }
+            }
+            return rooms;
         }
 
         [Authorize]

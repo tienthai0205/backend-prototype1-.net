@@ -38,7 +38,7 @@ namespace ReservationApi.Controllers
             User user = _context.Users.Find(reservation.UserId);
             reservation.Room = room;
             reservation.User = user;
-            _context.Reservations.Add(reservation);
+            await _context.Reservations.AddAsync(reservation);
             AddReservationToRoom(room.Id, reservation);
             await _context.SaveChangesAsync();
 
