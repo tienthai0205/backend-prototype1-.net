@@ -10,6 +10,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+
 
 namespace ReservationApi.Controllers
 
@@ -28,8 +30,8 @@ namespace ReservationApi.Controllers
         [HttpGet]
         public async Task<RedirectToActionResult> Seed()
         {
-            _context.Users.Add(new User {Id = 1, Email = "tien@saxion.nl", Password = BCrypt.Net.BCrypt.HashPassword("Tien12345") });
-            _context.Users.Add(new User { Id= 2, Email = "max@saxion.nl", Password = BCrypt.Net.BCrypt.HashPassword("Max12345") });
+            _context.Users.Add(new User { Id = 1, Email = "tien@saxion.nl", Password = BCrypt.Net.BCrypt.HashPassword("Tien12345") });
+            _context.Users.Add(new User { Id = 2, Email = "max@saxion.nl", Password = BCrypt.Net.BCrypt.HashPassword("Max12345") });
 
             _context.Rooms.Add(new Room { Id = 1, Number = "1A", Floor = "1st" });
             _context.Rooms.Add(new Room { Id = 2, Number = "2A", Floor = "1st" });
@@ -41,7 +43,7 @@ namespace ReservationApi.Controllers
             // _context.Reservations.Add(new Reservation{ Id = 1, RoomId = 1, UserId = 1, Date = "01/02/2021"});
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(actionName: "GetUsers", controllerName:"users");
+            return RedirectToAction(actionName: "GetUsers", controllerName: "users");
         }
         // GET api/users
         [Authorize]
@@ -81,6 +83,9 @@ namespace ReservationApi.Controllers
             {
                 return NotFound(new { error = "User not found!" });
             }
+            if (HttpContext.Session.GetString("email") != null){
+                return BadRequest(new { error = "Sorry you're already logged in!" });
+            }
             string hashedPwd = user.Password;
             bool verified = BCrypt.Net.BCrypt.Verify(body.Password, hashedPwd);
 
@@ -104,14 +109,23 @@ namespace ReservationApi.Controllers
                 claims,
                 notBefore: DateTime.Now,
                 expires: DateTime.Now.AddHours(1),
-                signingCredentials);
-
+                signingCredentials: signingCredentials);
             var access_token = new JwtSecurityTokenHandler().WriteToken(token);
+            HttpContext.Session.SetString("email", user.Email);
+
             return Ok(new
             {
                 accessToken = access_token,
                 email = user.Email
             });
+        }
+
+        [Route("logout")]
+        [Authorize]
+        [HttpPost]
+        public ActionResult<User> Logout(){
+            HttpContext.Session.Remove("email");
+            return Ok();
         }
 
         [Authorize]
@@ -134,7 +148,7 @@ namespace ReservationApi.Controllers
 
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<ActionResult<User>> UpdateAccount(int id,[FromBody]User userIn)
+        public async Task<ActionResult<User>> UpdateAccount(int id, [FromBody] User userIn)
         {
 
             if (!IsAuthorized(id))

@@ -21,36 +21,38 @@ namespace ReservationApi
             services.AddDbContext<UserContext>(opts =>
                 opts.UseInMemoryDatabase("UserList")
             );
+            services.AddDistributedMemoryCache(); // Adds a default in-memory implementation of IDistributedCache
+            services.AddSession();
             services.AddAuthentication("OAuth")
-                .AddJwtBearer("OAuth", config =>
-                {
-                    config.SaveToken = true;
-                    var secretBytes = Encoding.UTF8.GetBytes(Constants.Secret);
-                    var key = new SymmetricSecurityKey(secretBytes);
+                 .AddJwtBearer("OAuth", config =>
+                 {
+                     config.SaveToken = true;
+                     var secretBytes = Encoding.UTF8.GetBytes(Constants.Secret);
+                     var key = new SymmetricSecurityKey(secretBytes);
 
-                    config.Events = new JwtBearerEvents()
-                    {
-                        OnMessageReceived = context =>
-                        {
-                            if (context.Request.Query.ContainsKey("access_token"))
-                            {
-                                context.Token = context.Request.Query["access_token"];
-                            }
+                     config.Events = new JwtBearerEvents()
+                     {
+                         OnMessageReceived = context =>
+                         {
+                             if (context.Request.Query.ContainsKey("access_token"))
+                             {
+                                 context.Token = context.Request.Query["access_token"];
+                             }
 
-                            return Task.CompletedTask;
-                        }
-                    };
+                             return Task.CompletedTask;
+                         }
+                     };
 
-                    config.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidIssuer = Constants.Issuer,
-                        ValidAudience = Constants.Audiance,
-                        IssuerSigningKey = key,
-                    };
-                });
+                     config.TokenValidationParameters = new TokenValidationParameters()
+                     {
+                         ValidIssuer = Constants.Issuer,
+                         ValidAudience = Constants.Audiance,
+                         IssuerSigningKey = key,
+                     };
+                 });
 
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); 
-            services.AddControllers().AddNewtonsoftJson(options => 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
         }
@@ -63,6 +65,7 @@ namespace ReservationApi
             }
 
             app.UseRouting();
+            app.UseSession();
 
             app.UseAuthentication();
 
